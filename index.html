@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>GifTastic</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+    <div class="buttons">
+
+    <button data-soccer="ronaldinho" class="btn bg-secondary">Ronaldinho</button>
+    <button data-soccer="ronaldo" class="btn bg-secondary">Ronaldo</button>
+    <button data-soccer="messi" class="btn bg-secondary">Messi</button>
+    <button data-soccer="soccer" class="btn bg-secondary">Soccer</button>
+    <button data-soccer="neymar" class="btn bg-secondary">Neymar</button>
+
+    </div>
+
+    <div class="input-group mb-3"></div>
+
+    <div id="gif"></div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script>
+
+        $("button").on("click", function () {
+
+            var play = $(this).attr("data-soccer");
+            var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
+                play + "&api_key=emCMd9mbUELqd1YQZK4pBHqV2es4Q58V&limit=10";
+
+            $.ajax({
+                url: queryURL,
+                method: "GET"
+            })
+
+            .then(function(response) {
+
+                    var results = response.data;
+
+
+                    for (var i = 0; i < results.length; i++) {
+
+                        var div = $("<div>");
+                        var p = $("<p>").text("Rating: " + results[i].rating);
+                        var image = $("<img>");
+
+
+                        image.attr("src", results[i].images.fixed_height.url);
+
+
+                        div.append(p);
+                        div.append(image);
+
+                        $("#gif").prepend(div);
+                    };
+
+
+
+                });
+
+        });
+
+        
+
+
+
+    </script>
+
+
+</body>
+
+</html>
