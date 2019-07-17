@@ -13,17 +13,20 @@
 </head>
 
 <body>
+
     <div class="buttons">
 
-        <button data-soccer="ronaldinho" class="btn bg-secondary">Ronaldinho</button>
-        <button data-soccer="ronaldo" class="btn bg-secondary">Ronaldo</button>
-        <button data-soccer="messi" class="btn bg-secondary">Messi</button>
-        <button data-soccer="soccer" class="btn bg-secondary">Soccer</button>
-        <button data-soccer="neymar" class="btn bg-secondary">Neymar</button>
+        <div class="new-buttons"></div>
+
+        <button data-soccer="ronaldinho" class="btn bg-light">Ronaldinho</button>
+        <button data-soccer="ronaldo" class="btn bg-light">Ronaldo</button>
+        <button data-soccer="messi" class="btn bg-light">Messi</button>
+        <button data-soccer="soccer" class="btn bg-light">Soccer</button>
+        <button data-soccer="neymar" class="btn bg-light">Neymar</button>
 
     </div>
 
-    <div class="input-group mb-3">
+    <div class="input-group mb-3 col-9">
         <input type="text" class="form-control" id="search-input" placeholder="Search your favorite GIF">
         <div class="input-group-append">
             <button id="search" class="btn btn-outline-secondary" type="button">Submit</button>
@@ -33,13 +36,22 @@
     <div id="gif"></div>
 
 
+
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script>
 
+        // Global variables
+        var newButtons = [];
+        var dataState = $(this).attr("data-state");
+        console.log(dataState);
+
+
+        // Search mecanism
         $("#search").on("click", function (event) {
 
             event.preventDefault();
-            var search = $("#search-input").val();
+            var search = $("#search-input").val().trim();
             var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
                 search + "&api_key=emCMd9mbUELqd1YQZK4pBHqV2es4Q58V&limit=10";
 
@@ -66,16 +78,37 @@
                     div.append(image);
 
                     $("#gif").prepend(div);
-                };
 
+
+                };
+                newButtons.push(search);
+                renderButtons();
 
 
             });
 
+            // Appending new buttons to .buttons
+            function renderButtons() {
+
+                $(".new-buttons").empty();
+
+
+                for (var i = 0; i < newButtons.length; i++) {
+
+                    var button = $("<button>");
+                    button.addClass("btn bg-secondary text-capitalize");
+                    button.attr("data-soccer", newButtons[i]);
+                    button.text(newButtons[i]);
+                    $(".new-buttons").append(button);
+
+                }
+
+            }
+
 
         });
 
-
+        // Returning GIF results on clicking the button
         $("button").on("click", function () {
 
             var play = $(this).attr("data-soccer");
@@ -109,13 +142,56 @@
                         $("#gif").prepend(div);
                     };
 
+                });
 
+        });
+
+        // Returning GIF results on clicking the button for the new buttons
+        $(".new-buttons").on("click", function () {
+
+            var play = $(this).attr("data-soccer");
+            var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
+                play + "&api_key=emCMd9mbUELqd1YQZK4pBHqV2es4Q58V&limit=10";
+
+
+            $.ajax({
+                url: queryURL,
+                method: "GET"
+            })
+
+                .then(function (response) {
+
+                    var results = response.data;
+
+
+                    for (var i = 0; i < results.length; i++) {
+
+                        var div = $("<div>");
+                        var p = $("<p>").text("Rating: " + results[i].rating);
+                        var image = $("<img>");
+
+
+                        image.attr("src", results[i].images.fixed_height.url);
+
+
+                        div.append(p);
+                        div.append(image);
+
+                        $("#gif").prepend(div);
+                    };
 
                 });
 
         });
 
+        // Adding pause/play to GIFs
+        $("#gif").on("click", function () {
 
+                if (data-state === "still") {
+                    $(this).attr("src", )
+                }
+
+        });
 
 
 
