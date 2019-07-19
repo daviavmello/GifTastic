@@ -94,19 +94,9 @@
 
                         var div = $("<div>");
                         var p = $("<p>").text("Rating: " + results[i].rating);
-                        var image = $("<img>");
-                        image.addClass("new-gif");
-
-
-                        var still = results[i].images.fixed_height_still.url;
-                        var animate = results[i].images.fixed_height.url;
-
-                        image.attr("src", animate);
-                        image.attr("data-state", "animate");
-
-                        image.attr("src", still);
-                        image.attr("data-state", "still");
-                    
+                        var image = $("<img>");           
+                        
+                        div.append($("<img>",{"src": results[i].images.fixed_height.url,"data-still":results[i].images.fixed_height_still.url,"data-animated": results[i].images.fixed_height.url,"data-state": "animated","class" : "new-gif"}));
                         div.append(p);
                         div.append(image);
 
@@ -117,16 +107,12 @@
         });
 
         // Play/Pause GIF function
-        $(".new-gif").on("click", function () {
+        $(document).on("click",".new-gif", function () {
 
             var state = $(this).attr("data-state");
 
-            // var animate = results[i].images.fixed_height.url;
-            // var still = results[i].images.fixed_height_still.url;
-            // var state = $(this).attr("data-state");
-
             if (state === "still") {
-                $(this).attr("src", $(this).attr("data-animate"));
+                $(this).attr("src", $(this).attr("data-animated"));
                 $(this).attr("data-state", "animate");
             } else {
                 $(this).attr("src", $(this).attr("data-still"));
