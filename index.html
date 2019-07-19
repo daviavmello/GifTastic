@@ -14,15 +14,10 @@
 
 <body>
 
-    <div class="buttons">
+    <div id="buttons-text"></div>
 
-        <div class="new-buttons"></div>
+    <!-- btn bg-secondary text-capitalize -->
 
-        <button data-soccer="ronaldinho" class="btn bg-light">Ronaldinho</button>
-        <button data-soccer="ronaldo" class="btn bg-light">Ronaldo</button>
-        <button data-soccer="messi" class="btn bg-light">Messi</button>
-        <button data-soccer="soccer" class="btn bg-light">Soccer</button>
-        <button data-soccer="neymar" class="btn bg-light">Neymar</button>
 
     </div>
 
@@ -42,157 +37,108 @@
     <script>
 
         // Global variables
-        var newButtons = [];
-        var dataState = $(this).attr("data-state");
-        console.log(dataState);
+        var buttons = ['Ronaldo', 'Messi', 'Neymar', 'Soccer'];
 
+        // Appending new buttons to .buttons
+        function renderButtons() {
+
+            $("#buttons-text").empty();
+
+
+            for (var i = 0; i < buttons.length; i++) {
+
+                var newButtons = $("<button>");
+                newButtons.addClass("buttons text-capitalize btn bg-secondary");
+                newButtons.attr("data-name", buttons[i]);
+                newButtons.text(buttons[i]);
+                $("#buttons-text").append(newButtons);
+
+            }
+
+        }
 
         // Search mecanism
         $("#search").on("click", function (event) {
 
             event.preventDefault();
+
             var search = $("#search-input").val().trim();
+            buttons.push(search);
+            renderButtons();
+
+        });
+
+
+
+
+        // Returning GIF results on button click
+        $(document).on("click", ".buttons", function () {
+
+            var play = $(this).attr("data-name");
             var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
-                search + "&api_key=emCMd9mbUELqd1YQZK4pBHqV2es4Q58V&limit=10";
+                play + "&api_key=BkaUZZWcFij6J7AoQj3WtPb1R2p9O6V9&limit=10";
 
 
             $.ajax({
                 url: queryURL,
                 method: "GET"
-            }).then(function (response) {
+            })
 
-                var results = response.data;
+                .then(function (response) {
 
-
-                for (var i = 0; i < results.length; i++) {
-
-                    var div = $("<div>");
-                    var p = $("<p>").text("Rating: " + results[i].rating);
-                    var image = $("<img>");
+                    var results = response.data;
+                    console.log(results);
 
 
-                    image.attr("src", results[i].images.fixed_height.url);
+                    for (var i = 0; i < results.length; i++) {
+
+                        var div = $("<div>");
+                        var p = $("<p>").text("Rating: " + results[i].rating);
+                        var image = $("<img>");
+                        image.addClass("new-gif");
 
 
-                    div.append(p);
-                    div.append(image);
+                        var still = results[i].images.fixed_height_still.url;
+                        var animate = results[i].images.fixed_height.url;
 
-                    $("#gif").prepend(div);
+                        image.attr("src", animate);
+                        image.attr("data-state", "animate");
 
+                        image.attr("src", still);
+                        image.attr("data-state", "still");
+                    
+                        div.append(p);
+                        div.append(image);
 
-                };
-                newButtons.push(search);
-                renderButtons();
+                        $("#gif").prepend(div);
+                    };
 
+                });
+        });
 
-            });
+        // Play/Pause GIF function
+        $(".new-gif").on("click", function () {
 
-            // Appending new buttons to .buttons
-            function renderButtons() {
+            var state = $(this).attr("data-state");
 
-                $(".new-buttons").empty();
+            // var animate = results[i].images.fixed_height.url;
+            // var still = results[i].images.fixed_height_still.url;
+            // var state = $(this).attr("data-state");
 
-
-                for (var i = 0; i < newButtons.length; i++) {
-
-                    var button = $("<button>");
-                    button.addClass("btn bg-secondary text-capitalize");
-                    button.attr("data-soccer", newButtons[i]);
-                    button.text(newButtons[i]);
-                    $(".new-buttons").append(button);
-
-                }
-
+            if (state === "still") {
+                $(this).attr("src", $(this).attr("data-animate"));
+                $(this).attr("data-state", "animate");
+            } else {
+                $(this).attr("src", $(this).attr("data-still"));
+                $(this).attr("data-state", "still");
             }
 
 
-        });
-
-        // Returning GIF results on clicking the button
-        $("button").on("click", function () {
-
-            var play = $(this).attr("data-soccer");
-            var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
-                play + "&api_key=emCMd9mbUELqd1YQZK4pBHqV2es4Q58V&limit=10";
-
-
-            $.ajax({
-                url: queryURL,
-                method: "GET"
-            })
-
-                .then(function (response) {
-
-                    var results = response.data;
-
-
-                    for (var i = 0; i < results.length; i++) {
-
-                        var div = $("<div>");
-                        var p = $("<p>").text("Rating: " + results[i].rating);
-                        var image = $("<img>");
-
-
-                        image.attr("src", results[i].images.fixed_height.url);
-
-
-                        div.append(p);
-                        div.append(image);
-
-                        $("#gif").prepend(div);
-                    };
-
-                });
 
         });
 
-        // Returning GIF results on clicking the button for the new buttons
-        $(".new-buttons").on("click", function () {
 
-            var play = $(this).attr("data-soccer");
-            var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
-                play + "&api_key=emCMd9mbUELqd1YQZK4pBHqV2es4Q58V&limit=10";
-
-
-            $.ajax({
-                url: queryURL,
-                method: "GET"
-            })
-
-                .then(function (response) {
-
-                    var results = response.data;
-
-
-                    for (var i = 0; i < results.length; i++) {
-
-                        var div = $("<div>");
-                        var p = $("<p>").text("Rating: " + results[i].rating);
-                        var image = $("<img>");
-
-
-                        image.attr("src", results[i].images.fixed_height.url);
-
-
-                        div.append(p);
-                        div.append(image);
-
-                        $("#gif").prepend(div);
-                    };
-
-                });
-
-        });
-
-        // Adding pause/play to GIFs
-        $("#gif").on("click", function () {
-
-                if (data-state === "still") {
-                    $(this).attr("src", )
-                }
-
-        });
-
+        renderButtons();
 
 
     </script>
